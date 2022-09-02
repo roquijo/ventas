@@ -11,48 +11,41 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/clientes")
-
-
-public class ClientreController {
+public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
 
-    @GetMapping()
+    @GetMapping("/findAll")
     public ResponseEntity<List<Cliente>> findAll(){
-
         return ResponseEntity.ok(clienteService.findAll());
-
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/findById/{id}")
     public ResponseEntity<Cliente> findById(@PathVariable("id")Integer idCliente){
-
         return clienteService.findById(idCliente)
                 .map(ResponseEntity::ok)
                 .orElseGet(( )->ResponseEntity.notFound().build());
     }
 
-    @PostMapping()
+    @PostMapping("/create")
     public ResponseEntity<Cliente> create(@Valid @RequestBody Cliente cliente){
         return new ResponseEntity<>(clienteService.create(cliente), HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<Cliente> update(@Valid @RequestBody Cliente cliente){
         return clienteService.findById(cliente.getIdCliente())
                 .map(c -> ResponseEntity.ok(clienteService.update(cliente)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Cliente> delete(@PathVariable("id") Integer idCliente){
-
         return clienteService.findById(idCliente)
                 .map( c -> {
                     clienteService.delete(idCliente);
                     return ResponseEntity.ok(c);
-
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
